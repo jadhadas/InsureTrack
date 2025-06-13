@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Save, Plus, RefreshCw, Eye, EyeOff } from 'lucide-react';
+import { X, Save, Plus, RefreshCw, Eye, EyeOff, Calendar } from 'lucide-react';
 import { Policy } from '../types/policy';
 import { generatePolicyNumber } from '../utils/localStorage';
 
@@ -23,6 +23,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
     policyholderName: policy?.policyholderName || '',
     dateOfBirth: policy?.dateOfBirth || '',
     policyRenewalDate: policy?.policyRenewalDate || '',
+    renewalFrequency: policy?.renewalFrequency || 'yearly' as const,
     mobileNumber: policy?.mobileNumber || '',
     policyPremiumAmount: policy?.policyPremiumAmount || 0,
     insuranceCategory: policy?.insuranceCategory || 'life' as const
@@ -40,6 +41,7 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
         policyholderName: policy?.policyholderName || '',
         dateOfBirth: policy?.dateOfBirth || '',
         policyRenewalDate: policy?.policyRenewalDate || '',
+        renewalFrequency: policy?.renewalFrequency || 'yearly' as const,
         mobileNumber: policy?.mobileNumber || '',
         policyPremiumAmount: policy?.policyPremiumAmount || 0,
         insuranceCategory: policy?.insuranceCategory || 'life' as const
@@ -180,6 +182,20 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
     }).format(amount);
   };
 
+  const calculateAnnualizedPremium = () => {
+    if (formData.renewalFrequency === 'monthly') {
+      return formData.policyPremiumAmount * 12;
+    }
+    return formData.policyPremiumAmount;
+  };
+
+  const calculateMonthlyPremium = () => {
+    if (formData.renewalFrequency === 'yearly') {
+      return formData.policyPremiumAmount / 12;
+    }
+    return formData.policyPremiumAmount;
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -313,10 +329,32 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
               )}
             </div>
 
+            {/* Renewal Frequency */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Renewal Frequency *
+              </label>
+              <select
+                name="renewalFrequency"
+                value={formData.renewalFrequency}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+              >
+                <option value="monthly">Monthly Renewal</option>
+                <option value="yearly">Yearly Renewal</option>
+              </select>
+              <p className="mt-1 text-xs text-gray-500">
+                Choose how often this policy needs to be renewed
+              </p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Policy Renewal Date */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Policy Renewal Date *
+                Next Renewal Date *
               </label>
               <input
                 type="date"
@@ -335,10 +373,11 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
                   {errors.policyRenewalDate}
                 </p>
               )}
+              <p className="mt-1 text-xs text-gray-500">
+                Date when this policy needs to be renewed next
+              </p>
             </div>
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Mobile Number */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -366,48 +405,69 @@ const PolicyForm: React.FC<PolicyFormProps> = ({
                 <p className="mt-1 text-xs text-green-600">✓ Valid mobile number</p>
               )}
             </div>
+          </div>
 
-            {/* Premium Amount */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Policy Premium Amount (₹) *
-              </label>
-              <div className="relative">
-                <input
-                  type="number"
-                  name="policyPremiumAmount"
-                  value={formData.policyPremiumAmount}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  min="1"
-                  step="1"
-                  className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 ${
-                    errors.policyPremiumAmount ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                  }`}
-                  placeholder="Enter premium amount"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPremiumDetails(!showPremiumDetails)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPremiumDetails ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-              {errors.policyPremiumAmount && (
-                <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
-                  <span className="w-1 h-1 bg-red-600 rounded-full"></span>
-                  {errors.policyPremiumAmount}
-                </p>
-              )}
-              {showPremiumDetails && formData.policyPremiumAmount > 0 && (
-                <div className="mt-2 p-3 bg-blue-50 rounded-lg text-sm">
-                  <p className="text-blue-800 font-medium">Premium Details:</p>
-                  <p className="text-blue-700">Amount: {formatCurrency(formData.policyPremiumAmount)}</p>
-                  <p className="text-blue-600">Monthly: {formatCurrency(formData.policyPremiumAmount / 12)}</p>
-                </div>
-              )}
+          {/* Premium Amount */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Premium Amount (₹) *
+            </label>
+            <div className="relative">
+              <input
+                type="number"
+                name="policyPremiumAmount"
+                value={formData.policyPremiumAmount}
+                onChange={handleChange}
+                disabled={isSubmitting}
+                min="1"
+                step="1"
+                className={`w-full px-3 py-2 pr-10 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200 ${
+                  errors.policyPremiumAmount ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
+                placeholder="Enter premium amount"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPremiumDetails(!showPremiumDetails)}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                {showPremiumDetails ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
+            {errors.policyPremiumAmount && (
+              <p className="mt-1 text-sm text-red-600 flex items-center gap-1">
+                <span className="w-1 h-1 bg-red-600 rounded-full"></span>
+                {errors.policyPremiumAmount}
+              </p>
+            )}
+            <p className="mt-1 text-xs text-gray-500">
+              Enter the {formData.renewalFrequency} premium amount
+            </p>
+            
+            {showPremiumDetails && formData.policyPremiumAmount > 0 && (
+              <div className="mt-3 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200/50">
+                <div className="flex items-center gap-2 mb-3">
+                  <Calendar className="h-4 w-4 text-blue-600" />
+                  <p className="text-blue-800 font-semibold text-sm">Premium Breakdown</p>
+                </div>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <p className="text-gray-600 text-xs font-medium">Monthly Premium</p>
+                    <p className="text-blue-700 font-bold">{formatCurrency(calculateMonthlyPremium())}</p>
+                  </div>
+                  <div className="bg-white/60 p-3 rounded-lg">
+                    <p className="text-gray-600 text-xs font-medium">Annual Premium</p>
+                    <p className="text-blue-700 font-bold">{formatCurrency(calculateAnnualizedPremium())}</p>
+                  </div>
+                </div>
+                <div className="mt-3 p-2 bg-blue-100/50 rounded-lg">
+                  <p className="text-blue-700 text-xs">
+                    <strong>Renewal:</strong> {formData.renewalFrequency === 'monthly' ? 'Every month' : 'Every year'} - 
+                    {formatCurrency(formData.policyPremiumAmount)} per {formData.renewalFrequency === 'monthly' ? 'month' : 'year'}
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Form Actions */}

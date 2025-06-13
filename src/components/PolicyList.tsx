@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Filter, Edit, Trash2, Plus, Calendar, Phone, CreditCard, AlertCircle, X, Sparkles } from 'lucide-react';
+import { Search, Filter, Edit, Trash2, Plus, Calendar, Phone, CreditCard, AlertCircle, X, Sparkles, Clock } from 'lucide-react';
 import { Policy } from '../types/policy';
 import { formatDate, calculateAge, getDaysUntilRenewal } from '../utils/dateUtils';
 
@@ -13,6 +13,7 @@ interface PolicyListProps {
 const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onAdd }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
+  const [renewalFilter, setRenewalFilter] = useState('all');
   const [sortBy, setSortBy] = useState('name');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
@@ -24,8 +25,9 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
         policy.mobileNumber.includes(searchTerm);
       
       const matchesCategory = categoryFilter === 'all' || policy.insuranceCategory === categoryFilter;
+      const matchesRenewal = renewalFilter === 'all' || policy.renewalFrequency === renewalFilter;
       
-      return matchesSearch && matchesCategory;
+      return matchesSearch && matchesCategory && matchesRenewal;
     })
     .sort((a, b) => {
       switch (sortBy) {
@@ -39,6 +41,8 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
           return a.insuranceCategory.localeCompare(b.insuranceCategory);
         case 'recent':
           return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'frequency':
+          return a.renewalFrequency.localeCompare(b.renewalFrequency);
         default:
           return 0;
       }
@@ -66,6 +70,14 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
       medical: 'bg-purple-50 text-purple-700 border-purple-200/50'
     };
     return colors[category as keyof typeof colors] || 'bg-gray-50 text-gray-700 border-gray-200/50';
+  };
+
+  const getRenewalFrequencyColor = (frequency: string) => {
+    const colors = {
+      monthly: 'bg-green-50 text-green-700 border-green-200/50',
+      yearly: 'bg-indigo-50 text-indigo-700 border-indigo-200/50'
+    };
+    return colors[frequency as keyof typeof colors] || 'bg-gray-50 text-gray-700 border-gray-200/50';
   };
 
   const getCategoryLabel = (category: string) => {
@@ -117,7 +129,7 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
 
       {/* Enhanced Filters and Search */}
       <div className="bg-white/80 backdrop-blur-sm p-6 rounded-3xl shadow-xl border border-white/20">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
           {/* Enhanced Search */}
           <div className="relative md:col-span-2">
             <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -160,6 +172,25 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
             </div>
           </div>
 
+          {/* Renewal Frequency Filter */}
+          <div className="relative">
+            <Clock className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5 pointer-events-none" />
+            <select
+              value={renewalFilter}
+              onChange={(e) => setRenewalFilter(e.target.value)}
+              className="w-full pl-12 pr-4 py-4 border border-gray-200/50 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent appearance-none bg-gray-50/50 focus:bg-white transition-all duration-200 cursor-pointer shadow-sm"
+            >
+              <option value="all">All Renewals</option>
+              <option value="monthly">Monthly</option>
+              <option value="yearly">Yearly</option>
+            </select>
+            <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
+              <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+
           {/* Enhanced Sort */}
           <div className="relative">
             <select
@@ -171,6 +202,7 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
               <option value="renewal">Sort by Renewal Date</option>
               <option value="premium">Sort by Premium</option>
               <option value="category">Sort by Category</option>
+              <option value="frequency">Sort by Frequency</option>
               <option value="recent">Sort by Recently Added</option>
             </select>
             <div className="absolute right-4 top-1/2 transform -translate-y-1/2 pointer-events-none">
@@ -185,11 +217,18 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
       {/* Enhanced Results Summary */}
       <div className="flex justify-between items-center text-sm text-gray-600 px-2">
         <span className="font-semibold">Showing {filteredAndSortedPolicies.length} of {policies.length} policies</span>
-        {searchTerm && (
-          <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-200/50">
-            Search: "{searchTerm}"
-          </span>
-        )}
+        <div className="flex gap-2">
+          {searchTerm && (
+            <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold border border-blue-200/50">
+              Search: "{searchTerm}"
+            </span>
+          )}
+          {renewalFilter !== 'all' && (
+            <span className="bg-green-50 text-green-700 px-3 py-1 rounded-full text-xs font-semibold border border-green-200/50">
+              {renewalFilter === 'monthly' ? 'Monthly' : 'Yearly'} Renewals
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Enhanced Policy Cards */}
@@ -261,10 +300,13 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
                     </div>
                   </div>
 
-                  {/* Enhanced Category Badge */}
-                  <div className="mb-6">
+                  {/* Enhanced Category and Frequency Badges */}
+                  <div className="mb-6 flex flex-wrap gap-2">
                     <span className={`inline-block px-4 py-2 text-sm font-semibold rounded-2xl border ${getCategoryColor(policy.insuranceCategory)} shadow-sm`}>
                       {getCategoryLabel(policy.insuranceCategory)}
+                    </span>
+                    <span className={`inline-block px-4 py-2 text-sm font-semibold rounded-2xl border ${getRenewalFrequencyColor(policy.renewalFrequency)} shadow-sm`}>
+                      {policy.renewalFrequency === 'monthly' ? 'Monthly' : 'Yearly'} Renewal
                     </span>
                   </div>
 
@@ -275,7 +317,7 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
                         <Calendar className="h-5 w-5 text-blue-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-gray-500 text-xs block font-medium">Renewal Date</span>
+                        <span className="text-gray-500 text-xs block font-medium">Next Renewal</span>
                         <span className="font-bold text-gray-900">{formatDate(policy.policyRenewalDate)}</span>
                       </div>
                       <span className={`text-xs font-semibold px-3 py-1 rounded-xl border ${renewalStatus.bgColor} ${renewalStatus.color}`}>
@@ -298,8 +340,20 @@ const PolicyList: React.FC<PolicyListProps> = ({ policies, onEdit, onDelete, onA
                         <CreditCard className="h-5 w-5 text-purple-600" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className="text-gray-500 text-xs block font-medium">Premium Amount</span>
+                        <span className="text-gray-500 text-xs block font-medium">
+                          {policy.renewalFrequency === 'monthly' ? 'Monthly' : 'Annual'} Premium
+                        </span>
                         <span className="font-bold text-purple-600 text-lg">{formatCurrency(policy.policyPremiumAmount)}</span>
+                        {policy.renewalFrequency === 'monthly' && (
+                          <span className="text-xs text-gray-500 block">
+                            Annual: {formatCurrency(policy.policyPremiumAmount * 12)}
+                          </span>
+                        )}
+                        {policy.renewalFrequency === 'yearly' && (
+                          <span className="text-xs text-gray-500 block">
+                            Monthly: {formatCurrency(policy.policyPremiumAmount / 12)}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
