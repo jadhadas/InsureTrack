@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, Bell, Menu, X } from 'lucide-react';
+import { BarChart3, Users, Bell, Menu, X, MessageSquare } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PolicyList from './components/PolicyList';
 import PolicyForm from './components/PolicyForm';
+import SMSSettings from './components/SMSSettings';
 import { usePolicies } from './hooks/usePolicies';
 import { Policy } from './types/policy';
 
@@ -11,6 +12,7 @@ type View = 'dashboard' | 'policies';
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isSMSSettingsOpen, setIsSMSSettingsOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | undefined>();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
@@ -106,6 +108,18 @@ function App() {
               </button>
             );
           })}
+          
+          {/* SMS Settings Button */}
+          <button
+            onClick={() => {
+              setIsSMSSettingsOpen(true);
+              setIsMobileMenuOpen(false);
+            }}
+            className="w-full flex items-center px-6 py-4 text-left transition-all duration-200 group text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+          >
+            <MessageSquare className="h-5 w-5 mr-4 transition-transform duration-200 group-hover:scale-105" />
+            <span className="font-medium">SMS Settings</span>
+          </button>
         </nav>
 
         {/* Sidebar Footer */}
@@ -136,6 +150,13 @@ function App() {
             </div>
             
             <div className="flex items-center gap-4">
+              <button
+                onClick={() => setIsSMSSettingsOpen(true)}
+                className="hidden sm:flex items-center gap-2 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 px-4 py-2 rounded-full text-sm font-medium border border-green-200 shadow-sm hover:from-green-200 hover:to-emerald-200 transition-all duration-200"
+              >
+                <MessageSquare className="h-4 w-4" />
+                SMS Settings
+              </button>
               <div className="bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 px-4 py-2 rounded-full text-sm font-medium border border-blue-200 shadow-sm">
                 {policies.length} {policies.length === 1 ? 'Policy' : 'Policies'}
               </div>
@@ -164,6 +185,12 @@ function App() {
         onSubmit={handleFormSubmit}
         policy={editingPolicy}
         mode={editingPolicy ? 'edit' : 'create'}
+      />
+
+      {/* SMS Settings Modal */}
+      <SMSSettings
+        isOpen={isSMSSettingsOpen}
+        onClose={() => setIsSMSSettingsOpen(false)}
       />
     </div>
   );
