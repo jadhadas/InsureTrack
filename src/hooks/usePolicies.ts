@@ -10,12 +10,24 @@ export const usePolicies = () => {
 
   useEffect(() => {
     const loadedPolicies = loadFromLocalStorage();
-    setPolicies(loadedPolicies);
+    
+    // Migrate existing policies to include renewalFrequency if missing
+    const migratedPolicies = loadedPolicies.map(policy => ({
+      ...policy,
+      renewalFrequency: policy.renewalFrequency || 'yearly' as const
+    }));
+    
+    if (migratedPolicies.length !== loadedPolicies.length || 
+        migratedPolicies.some((p, i) => p.renewalFrequency !== loadedPolicies[i]?.renewalFrequency)) {
+      saveToLocalStorage(migratedPolicies);
+    }
+    
+    setPolicies(migratedPolicies);
     setLoading(false);
     
     // Initialize SMS scheduler for birthday and renewal reminders
-    if (loadedPolicies.length > 0) {
-      initializeSMSScheduler(loadedPolicies);
+    if (migratedPolicies.length > 0) {
+      initializeSMSScheduler(migratedPolicies);
     }
   }, []);
 
@@ -81,13 +93,39 @@ export const usePolicies = () => {
       return acc;
     }, {} as Record<string, number>);
 
+    const renewalFrequencyDistribution = policies.reduce((acc, policy) => {
+      const frequency = policy.renewalFrequency || 'yearly';
+      acc[frequency] = (acc[frequency] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+
+    // Calculate monthly and yearly premium totals
+    const monthlyPremiumTotal = policies.reduce((sum, policy) => {
+      if (policy.renewalFrequency === 'monthly') {
+        return sum + policy.policyPremiumAmount;
+      } else {
+        return sum + (policy.policyPremiumAmount / 12);
+      }
+    }, 0);
+
+    const yearlyPremiumTotal = policies.reduce((sum, policy) => {
+      if (policy.renewalFrequency === 'yearly') {
+        return sum + policy.policyPremiumAmount;
+      } else {
+        return sum + (policy.policyPremiumAmount * 12);
+      }
+    }, 0);
+
     return {
       totalPolicies,
       totalPremium,
       avgPremium,
       categoryDistribution,
       ageGroupDistribution,
-      monthlyRenewals
+      monthlyRenewals,
+      renewalFrequencyDistribution,
+      monthlyPremiumTotal,
+      yearlyPremiumTotal
     };
   };
 

@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { FileText, DollarSign, Users, Clock, Download, TrendingUp, Plus, MessageSquare, Sparkles, Star } from 'lucide-react';
+import { FileText, DollarSign, Users, Clock, TrendingUp, Plus, MessageSquare, Sparkles, Star, Calendar, RefreshCw } from 'lucide-react';
 import { usePolicies } from '../hooks/usePolicies';
 import StatsCard from './StatsCard';
 import PieChart from './PieChart';
 import RenewalAlerts from './RenewalAlerts';
-import { exportToCSV } from '../utils/localStorage';
 import { requestNotificationPermission, checkRenewalNotifications } from '../utils/notifications';
 import { loadSMSConfig } from '../utils/smsService';
 
@@ -19,12 +18,9 @@ const Dashboard: React.FC = () => {
     checkRenewalNotifications(policies);
   }, [policies]);
 
-  const handleExport = () => {
-    exportToCSV(policies);
-  };
-
   const categoryColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
   const ageGroupColors = ['#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1', '#14B8A6'];
+  const renewalFrequencyColors = ['#10B981', '#3B82F6'];
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -90,17 +86,6 @@ const Dashboard: React.FC = () => {
                 </div>
               )}
             </div>
-            
-            {/* Action Button */}
-            <div className="flex-shrink-0">
-              <button
-                onClick={handleExport}
-                className="group flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
-              >
-                <Download className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                Export Portfolio
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -153,18 +138,18 @@ const Dashboard: React.FC = () => {
           subtitle={growthPercentage !== 0 ? `${growthPercentage >= 0 ? '+' : ''}${growthPercentage}% from last month` : 'Active policies'}
         />
         <StatsCard
-          title="Total Premium"
-          value={formatCurrency(stats.totalPremium)}
-          icon={DollarSign}
+          title="Monthly Premium"
+          value={formatCurrency(stats.monthlyPremiumTotal)}
+          icon={Calendar}
           color="green"
-          subtitle="Across all policies"
+          subtitle="Total monthly premiums"
         />
         <StatsCard
-          title="Average Premium"
-          value={formatCurrency(stats.avgPremium)}
-          icon={Users}
+          title="Annual Premium"
+          value={formatCurrency(stats.yearlyPremiumTotal)}
+          icon={DollarSign}
           color="purple"
-          subtitle="Per policy"
+          subtitle="Total annual premiums"
         />
         <StatsCard
           title="Renewals Due"
@@ -181,7 +166,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Enhanced Charts */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <PieChart
           data={stats.categoryDistribution}
           colors={categoryColors}
@@ -192,7 +177,81 @@ const Dashboard: React.FC = () => {
           colors={ageGroupColors}
           title="Policyholder Age Groups"
         />
+        <PieChart
+          data={stats.renewalFrequencyDistribution}
+          colors={renewalFrequencyColors}
+          title="Renewal Frequency Distribution"
+        />
       </div>
+
+      {/* Enhanced Premium Breakdown */}
+      {policies.length > 0 && (
+        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
+              <DollarSign className="h-5 w-5 text-white" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-800">Premium Breakdown</h3>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="group bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="h-4 w-4 text-green-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-600">Monthly Total</span>
+              </div>
+              <p className="text-2xl font-bold text-green-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+                {formatCurrency(stats.monthlyPremiumTotal)}
+              </p>
+              <p className="text-xs text-gray-500">
+                {stats.renewalFrequencyDistribution.monthly || 0} monthly policies
+              </p>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
+                  <RefreshCw className="h-4 w-4 text-blue-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-600">Annual Total</span>
+              </div>
+              <p className="text-2xl font-bold text-blue-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+                {formatCurrency(stats.yearlyPremiumTotal)}
+              </p>
+              <p className="text-xs text-gray-500">
+                {stats.renewalFrequencyDistribution.yearly || 0} yearly policies
+              </p>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-2xl border border-purple-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center">
+                  <DollarSign className="h-4 w-4 text-purple-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-600">Average Premium</span>
+              </div>
+              <p className="text-2xl font-bold text-purple-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+                {formatCurrency(stats.avgPremium)}
+              </p>
+              <p className="text-xs text-gray-500">per policy</p>
+            </div>
+            
+            <div className="group bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center">
+                  <TrendingUp className="h-4 w-4 text-orange-600" />
+                </div>
+                <span className="text-sm font-semibold text-gray-600">Total Portfolio</span>
+              </div>
+              <p className="text-2xl font-bold text-orange-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+                {formatCurrency(stats.totalPremium)}
+              </p>
+              <p className="text-xs text-gray-500">all policies combined</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Enhanced Monthly Renewals */}
       {Object.keys(stats.monthlyRenewals).length > 0 && (

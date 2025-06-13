@@ -4,6 +4,7 @@ export interface Policy {
   policyholderName: string;
   dateOfBirth: string;
   policyRenewalDate: string;
+  renewalFrequency: 'monthly' | 'yearly';
   mobileNumber: string;
   policyPremiumAmount: number;
   insuranceCategory: 'life' | 'term' | 'car' | 'bike' | 'medical';
@@ -18,6 +19,9 @@ export interface PolicyStats {
   categoryDistribution: Record<string, number>;
   ageGroupDistribution: Record<string, number>;
   monthlyRenewals: Record<string, number>;
+  renewalFrequencyDistribution: Record<string, number>;
+  monthlyPremiumTotal: number;
+  yearlyPremiumTotal: number;
 }
 
 export interface RenewalAlert {
