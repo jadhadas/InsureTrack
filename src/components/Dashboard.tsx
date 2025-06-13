@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
-import { FileText, DollarSign, Users, Clock, Download, TrendingUp, Plus, MessageSquare, Sparkles, Star, Calendar, RefreshCw } from 'lucide-react';
+import { FileText, DollarSign, Users, Clock, TrendingUp, Plus, MessageSquare, Sparkles, Star, Calendar, RefreshCw } from 'lucide-react';
 import { usePolicies } from '../hooks/usePolicies';
 import StatsCard from './StatsCard';
 import PieChart from './PieChart';
 import RenewalAlerts from './RenewalAlerts';
-import { exportToCSV } from '../utils/localStorage';
 import { requestNotificationPermission, checkRenewalNotifications } from '../utils/notifications';
 import { loadSMSConfig } from '../utils/smsService';
 
@@ -18,10 +17,6 @@ const Dashboard: React.FC = () => {
     requestNotificationPermission();
     checkRenewalNotifications(policies);
   }, [policies]);
-
-  const handleExport = () => {
-    exportToCSV(policies);
-  };
 
   const categoryColors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
   const ageGroupColors = ['#06B6D4', '#84CC16', '#F97316', '#EC4899', '#6366F1', '#14B8A6'];
@@ -90,17 +85,6 @@ const Dashboard: React.FC = () => {
                   {growthPercentage >= 0 ? '+' : ''}{growthPercentage}% growth this month
                 </div>
               )}
-            </div>
-            
-            {/* Action Button */}
-            <div className="flex-shrink-0">
-              <button
-                onClick={handleExport}
-                className="group flex items-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-4 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold"
-              >
-                <Download className="h-5 w-5 group-hover:scale-110 transition-transform duration-200" />
-                Export Portfolio
-              </button>
             </div>
           </div>
         </div>

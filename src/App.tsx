@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, Bell, Menu, X, MessageSquare, Sparkles } from 'lucide-react';
+import { BarChart3, Users, Bell, Menu, X, MessageSquare, Sparkles, Settings as SettingsIcon } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PolicyList from './components/PolicyList';
 import PolicyForm from './components/PolicyForm';
 import SMSSettings from './components/SMSSettings';
+import Settings from './components/Settings';
 import { usePolicies } from './hooks/usePolicies';
 import { Policy } from './types/policy';
+import { saveToLocalStorage } from './utils/localStorage';
 
-type View = 'dashboard' | 'policies';
+type View = 'dashboard' | 'policies' | 'settings';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -62,9 +64,20 @@ function App() {
     setEditingPolicy(undefined);
   };
 
+  const handleImportPolicies = (importedPolicies: Policy[]) => {
+    saveToLocalStorage(importedPolicies);
+    window.location.reload(); // Refresh to load new data
+  };
+
+  const handleClearAllData = () => {
+    saveToLocalStorage([]);
+    window.location.reload(); // Refresh to clear all data
+  };
+
   const navigationItems = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'policies', label: 'Policies', icon: Users },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   return (
@@ -182,12 +195,15 @@ function App() {
               
               <div className="hidden sm:block">
                 <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  {currentView === 'dashboard' ? 'Dashboard' : 'Policy Management'}
+                  {currentView === 'dashboard' ? 'Dashboard' : 
+                   currentView === 'policies' ? 'Policy Management' : 'Settings'}
                 </h1>
                 <p className="text-sm text-gray-500 mt-1">
                   {currentView === 'dashboard' 
                     ? 'Overview of your insurance portfolio' 
-                    : 'Manage all your insurance policies'
+                    : currentView === 'policies'
+                    ? 'Manage all your insurance policies'
+                    : 'Configure application settings and data management'
                   }
                 </p>
               </div>
@@ -195,7 +211,8 @@ function App() {
               {/* Mobile title */}
               <div className="sm:hidden">
                 <h1 className="text-lg font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                  {currentView === 'dashboard' ? 'Dashboard' : 'Policies'}
+                  {currentView === 'dashboard' ? 'Dashboard' : 
+                   currentView === 'policies' ? 'Policies' : 'Settings'}
                 </h1>
               </div>
             </div>
@@ -238,6 +255,13 @@ function App() {
               onEdit={handleEditPolicy}
               onDelete={deletePolicy}
               onAdd={handleAddPolicy}
+            />
+          )}
+          {currentView === 'settings' && (
+            <Settings
+              policies={policies}
+              onImportPolicies={handleImportPolicies}
+              onClearAllData={handleClearAllData}
             />
           )}
         </main>
