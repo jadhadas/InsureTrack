@@ -1,4 +1,5 @@
 import React from 'react';
+import { TrendingUp } from 'lucide-react';
 
 interface PieChartProps {
   data: Record<string, number>;
@@ -11,17 +12,22 @@ const PieChart: React.FC<PieChartProps> = ({ data, colors, title }) => {
   
   if (total === 0) {
     return (
-      <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-lg border border-gray-100">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">{title}</h3>
-        <div className="flex items-center justify-center h-48 sm:h-64">
+      <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-10 h-10 bg-gradient-to-r from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+            <TrendingUp className="h-5 w-5 text-gray-400" />
+          </div>
+          <h3 className="text-xl font-bold text-gray-800">{title}</h3>
+        </div>
+        <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-6 h-6 sm:w-8 sm:h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm">
+              <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <p className="text-gray-500 font-medium text-sm sm:text-base">No data available</p>
-            <p className="text-gray-400 text-xs sm:text-sm mt-1">Add some policies to see the distribution</p>
+            <p className="text-gray-500 font-semibold text-base mb-2">No data available</p>
+            <p className="text-gray-400 text-sm">Add some policies to see the distribution</p>
           </div>
         </div>
       </div>
@@ -68,11 +74,17 @@ const PieChart: React.FC<PieChartProps> = ({ data, colors, title }) => {
   });
 
   return (
-    <div className="bg-white p-4 sm:p-8 rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-shadow duration-300">
-      <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">{title}</h3>
-      <div className="flex flex-col lg:flex-row items-center gap-4 sm:gap-8">
+    <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 group">
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+          <TrendingUp className="h-5 w-5 text-white" />
+        </div>
+        <h3 className="text-xl font-bold text-gray-800 group-hover:text-gray-900 transition-colors duration-200">{title}</h3>
+      </div>
+      
+      <div className="flex flex-col lg:flex-row items-center gap-8">
         <div className="relative flex-shrink-0">
-          <svg width="200" height="200" className="drop-shadow-lg">
+          <svg width="200" height="200" className="drop-shadow-xl group-hover:scale-105 transition-transform duration-300">
             {slices.map((slice, index) => (
               <g key={slice.key}>
                 <path
@@ -80,36 +92,41 @@ const PieChart: React.FC<PieChartProps> = ({ data, colors, title }) => {
                   fill={slice.color}
                   className="transition-all duration-300 hover:opacity-80 cursor-pointer hover:scale-105 transform-origin-center"
                   title={`${slice.key}: ${slice.value} (${slice.percentage.toFixed(1)}%)`}
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.1))' }}
+                  style={{ 
+                    filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.1))',
+                    transformOrigin: '100px 100px'
+                  }}
                 />
               </g>
             ))}
           </svg>
-          {/* Center circle for donut effect */}
+          
+          {/* Enhanced Center Circle */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center">
+            <div className="w-20 h-20 bg-white rounded-full shadow-xl border border-gray-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
               <div className="text-center">
-                <div className="text-lg sm:text-2xl font-bold text-gray-800">{total}</div>
-                <div className="text-xs text-gray-500">Total</div>
+                <div className="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">{total}</div>
+                <div className="text-xs text-gray-500 font-semibold">Total</div>
               </div>
             </div>
           </div>
         </div>
-        <div className="flex flex-col gap-2 sm:gap-3 w-full">
+        
+        <div className="flex flex-col gap-3 w-full">
           {slices.map((slice) => (
-            <div key={slice.key} className="flex items-center gap-3 sm:gap-4 p-2 sm:p-3 rounded-xl hover:bg-gray-50 transition-colors duration-200">
+            <div key={slice.key} className="group/item flex items-center gap-4 p-4 rounded-2xl hover:bg-gray-50/80 transition-all duration-200 cursor-pointer hover:scale-102">
               <div 
-                className="w-3 h-3 sm:w-4 sm:h-4 rounded-full flex-shrink-0 shadow-sm"
+                className="w-4 h-4 rounded-full flex-shrink-0 shadow-sm group-hover/item:scale-125 transition-transform duration-200"
                 style={{ backgroundColor: slice.color }}
               />
-              <span className="text-xs sm:text-sm text-gray-600 capitalize flex-grow font-medium truncate">
+              <span className="text-sm text-gray-600 capitalize flex-grow font-semibold truncate group-hover/item:text-gray-800 transition-colors duration-200">
                 {slice.key.replace(/([A-Z])/g, ' $1').trim()}
               </span>
               <div className="text-right flex-shrink-0">
-                <span className="text-xs sm:text-sm font-bold text-gray-800 block">
+                <span className="text-sm font-bold text-gray-800 block group-hover/item:scale-110 transition-transform duration-200">
                   {slice.value}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-gray-500 font-medium">
                   {slice.percentage.toFixed(1)}%
                 </span>
               </div>
