@@ -44,18 +44,22 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon: Icon, color, 
   const colors = colorClasses[color];
 
   return (
-    <div className={`${colors.card} p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl border group cursor-pointer`}>
-      <div className="flex items-center">
-        <div className={`${colors.bg} p-4 rounded-xl shadow-lg ${colors.shadow} group-hover:scale-110 transition-transform duration-300`}>
-          <Icon className={`h-6 w-6 ${colors.icon}`} />
+    <div className={`${colors.card} p-3 sm:p-6 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl border group cursor-pointer`}>
+      <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+        <div className={`${colors.bg} p-2 sm:p-4 rounded-xl shadow-lg ${colors.shadow} group-hover:scale-110 transition-transform duration-300 flex-shrink-0`}>
+          <Icon className={`h-4 w-4 sm:h-6 sm:w-6 ${colors.icon}`} />
         </div>
-        <div className="ml-5 flex-1">
-          <p className="text-sm font-medium text-gray-600 mb-1">{title}</p>
-          <p className={`text-2xl font-bold ${colors.text} mb-1 group-hover:scale-105 transition-transform duration-300`}>
-            {value}
+        <div className="flex-1 min-w-0">
+          <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1 truncate">{title}</p>
+          <p className={`text-lg sm:text-2xl font-bold ${colors.text} mb-1 group-hover:scale-105 transition-transform duration-300 truncate`}>
+            {typeof value === 'string' && value.length > 10 ? (
+              <span className="text-sm sm:text-xl">{value}</span>
+            ) : (
+              value
+            )}
           </p>
           {subtitle && (
-            <p className="text-xs text-gray-500 leading-tight">{subtitle}</p>
+            <p className="text-xs text-gray-500 leading-tight truncate">{subtitle}</p>
           )}
         </div>
       </div>
