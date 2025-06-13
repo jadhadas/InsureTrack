@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Policy, PolicyStats, RenewalAlert } from '../types/policy';
 import { loadFromLocalStorage, saveToLocalStorage } from '../utils/localStorage';
 import { calculateAge, getDaysUntilRenewal, getAgeGroup, isRenewalDueSoon } from '../utils/dateUtils';
+import { sendPolicyAddedSMS, initializeSMSScheduler } from '../utils/smsNotifications';
 
 export const usePolicies = () => {
   const [policies, setPolicies] = useState<Policy[]>([]);
@@ -11,6 +12,11 @@ export const usePolicies = () => {
     const loadedPolicies = loadFromLocalStorage();
     setPolicies(loadedPolicies);
     setLoading(false);
+    
+    // Initialize SMS scheduler for birthday and renewal reminders
+    if (loadedPolicies.length > 0) {
+      initializeSMSScheduler(loadedPolicies);
+    }
   }, []);
 
   const savePolicies = (newPolicies: Policy[]) => {
@@ -18,14 +24,26 @@ export const usePolicies = () => {
     saveToLocalStorage(newPolicies);
   };
 
-  const addPolicy = (policy: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>) => {
+  const addPolicy = async (policy: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>) => {
     const newPolicy: Policy = {
       ...policy,
       id: crypto.randomUUID(),
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    savePolicies([...policies, newPolicy]);
+    
+    const updatedPolicies = [...policies, newPolicy];
+    savePolicies(updatedPolicies);
+    
+    // Send welcome SMS
+    try {
+      const smsResult = await sendPolicyAddedSMS(newPolicy);
+      if (smsResult) {
+        console.log(`Welcome SMS sent to ${newPolicy.policyholderName}`);
+      }
+    } catch (error) {
+      console.error('Failed to send welcome SMS:', error);
+    }
   };
 
   const updatePolicy = (id: string, updates: Partial<Policy>) => {
