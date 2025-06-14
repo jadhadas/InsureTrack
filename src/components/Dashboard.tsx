@@ -54,35 +54,35 @@ const Dashboard: React.FC = () => {
   const growthPercentage = getGrowthPercentage();
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6 sm:space-y-8 w-full">
       {/* Enhanced Header */}
-      <div className="relative overflow-hidden bg-gradient-to-r from-white via-blue-50 to-indigo-50 rounded-3xl p-8 border border-white/20 shadow-xl">
+      <div className="relative overflow-hidden bg-gradient-to-r from-white via-blue-50 to-indigo-50 rounded-2xl sm:rounded-3xl p-6 sm:p-8 border border-white/20 shadow-xl">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-5">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full translate-x-32 -translate-y-32"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-purple-400 to-pink-600 rounded-full -translate-x-24 translate-y-24"></div>
+          <div className="absolute top-0 right-0 w-32 sm:w-64 h-32 sm:h-64 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full translate-x-16 sm:translate-x-32 -translate-y-16 sm:-translate-y-32"></div>
+          <div className="absolute bottom-0 left-0 w-24 sm:w-48 h-24 sm:h-48 bg-gradient-to-tr from-purple-400 to-pink-600 rounded-full -translate-x-12 sm:-translate-x-24 translate-y-12 sm:translate-y-24"></div>
         </div>
         
         <div className="relative z-10">
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+          <div className="flex flex-col gap-4 sm:gap-6">
             <div className="flex-1">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Sparkles className="h-6 w-6 text-white" />
+              <div className="flex items-center gap-3 mb-3 sm:mb-4">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-lg flex-shrink-0">
+                  <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent">
+                <div className="min-w-0 flex-1">
+                  <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent truncate">
                     Dashboard Overview
                   </h1>
-                  <p className="text-gray-600 text-lg">Smart Insurance Portfolio Management</p>
+                  <p className="text-gray-600 text-base sm:text-lg truncate">Smart Insurance Portfolio Management</p>
                 </div>
               </div>
               
               {/* Growth Indicator */}
               {growthPercentage !== 0 && (
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-4 py-2 rounded-2xl text-sm font-semibold border border-emerald-200/50 shadow-sm">
-                  <TrendingUp className="h-4 w-4" />
-                  {growthPercentage >= 0 ? '+' : ''}{growthPercentage}% growth this month
+                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-50 to-green-50 text-emerald-700 px-3 sm:px-4 py-2 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold border border-emerald-200/50 shadow-sm">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 flex-shrink-0" />
+                  <span className="truncate">{growthPercentage >= 0 ? '+' : ''}{growthPercentage}% growth this month</span>
                 </div>
               )}
             </div>
@@ -92,44 +92,44 @@ const Dashboard: React.FC = () => {
 
       {/* Enhanced SMS Status Alert */}
       {!smsConfig || !smsConfig.enabled ? (
-        <div className="relative overflow-hidden bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/50 rounded-3xl p-6 shadow-lg">
+        <div className="relative overflow-hidden bg-gradient-to-r from-amber-50 via-yellow-50 to-orange-50 border border-amber-200/50 rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-lg">
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full translate-x-16 -translate-y-16"></div>
+            <div className="absolute top-0 right-0 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full translate-x-8 sm:translate-x-16 -translate-y-8 sm:-translate-y-16"></div>
           </div>
-          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-            <div className="w-14 h-14 bg-gradient-to-r from-amber-100 to-yellow-100 rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md">
-              <MessageSquare className="h-7 w-7 text-amber-600" />
+          <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-amber-100 to-yellow-100 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0 shadow-md">
+              <MessageSquare className="h-6 w-6 sm:h-7 sm:w-7 text-amber-600" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-lg font-bold text-amber-900 mb-1">SMS Notifications Disabled</h3>
+              <h3 className="text-base sm:text-lg font-bold text-amber-900 mb-1 truncate">SMS Notifications Disabled</h3>
               <p className="text-amber-700 text-sm leading-relaxed">
                 Enable SMS notifications to automatically send welcome messages, birthday wishes, and renewal reminders to your policyholders.
               </p>
             </div>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('openSMSSettings'))}
-              className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-6 py-3 rounded-2xl hover:from-amber-600 hover:to-yellow-600 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto"
+              className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-xl sm:rounded-2xl hover:from-amber-600 hover:to-yellow-600 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 w-full sm:w-auto text-sm sm:text-base flex-shrink-0"
             >
               Setup SMS
             </button>
           </div>
         </div>
       ) : (
-        <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/50 rounded-2xl p-4 shadow-sm">
+        <div className="bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200/50 rounded-xl sm:rounded-2xl p-3 sm:p-4 shadow-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-emerald-100 to-green-100 rounded-xl flex items-center justify-center shadow-sm">
-              <MessageSquare className="h-5 w-5 text-emerald-600" />
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-emerald-100 to-green-100 rounded-lg sm:rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+              <MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" />
             </div>
-            <div>
-              <span className="text-emerald-800 font-semibold text-sm">SMS Notifications Active</span>
-              <p className="text-emerald-700 text-xs">Automatic messages enabled for policy events</p>
+            <div className="min-w-0 flex-1">
+              <span className="text-emerald-800 font-semibold text-sm block truncate">SMS Notifications Active</span>
+              <p className="text-emerald-700 text-xs truncate">Automatic messages enabled for policy events</p>
             </div>
           </div>
         </div>
       )}
 
       {/* Enhanced Stats Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
         <StatsCard
           title="Total Policies"
           value={stats.totalPolicies}
@@ -166,7 +166,7 @@ const Dashboard: React.FC = () => {
       )}
 
       {/* Enhanced Charts */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 sm:gap-8">
         <PieChart
           data={stats.categoryDistribution}
           colors={categoryColors}
@@ -186,68 +186,68 @@ const Dashboard: React.FC = () => {
 
       {/* Enhanced Premium Breakdown */}
       {policies.length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl flex items-center justify-center">
-              <DollarSign className="h-5 w-5 text-white" />
+        <div className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-white/20">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+              <DollarSign className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800">Premium Breakdown</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 truncate">Premium Breakdown</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="group bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border border-green-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-green-100 rounded-xl flex items-center justify-center">
-                  <Calendar className="h-4 w-4 text-green-600" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <div className="group bg-gradient-to-br from-green-50 to-emerald-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-green-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Calendar className="h-3 w-3 sm:h-4 sm:w-4 text-green-600" />
                 </div>
-                <span className="text-sm font-semibold text-gray-600">Monthly Total</span>
+                <span className="text-xs sm:text-sm font-semibold text-gray-600 truncate">Monthly Total</span>
               </div>
-              <p className="text-2xl font-bold text-green-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+              <p className="text-lg sm:text-2xl font-bold text-green-600 mb-1 group-hover:scale-110 transition-transform duration-200 truncate">
                 {formatCurrency(stats.monthlyPremiumTotal)}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 truncate">
                 {stats.renewalFrequencyDistribution.monthly || 0} monthly policies
               </p>
             </div>
             
-            <div className="group bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-blue-100 rounded-xl flex items-center justify-center">
-                  <RefreshCw className="h-4 w-4 text-blue-600" />
+            <div className="group bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-blue-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                  <RefreshCw className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600" />
                 </div>
-                <span className="text-sm font-semibold text-gray-600">Annual Total</span>
+                <span className="text-xs sm:text-sm font-semibold text-gray-600 truncate">Annual Total</span>
               </div>
-              <p className="text-2xl font-bold text-blue-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+              <p className="text-lg sm:text-2xl font-bold text-blue-600 mb-1 group-hover:scale-110 transition-transform duration-200 truncate">
                 {formatCurrency(stats.yearlyPremiumTotal)}
               </p>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 truncate">
                 {stats.renewalFrequencyDistribution.yearly || 0} yearly policies
               </p>
             </div>
             
-            <div className="group bg-gradient-to-br from-purple-50 to-violet-50 p-6 rounded-2xl border border-purple-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <DollarSign className="h-4 w-4 text-purple-600" />
+            <div className="group bg-gradient-to-br from-purple-50 to-violet-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-purple-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-purple-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                  <DollarSign className="h-3 w-3 sm:h-4 sm:w-4 text-purple-600" />
                 </div>
-                <span className="text-sm font-semibold text-gray-600">Average Premium</span>
+                <span className="text-xs sm:text-sm font-semibold text-gray-600 truncate">Average Premium</span>
               </div>
-              <p className="text-2xl font-bold text-purple-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+              <p className="text-lg sm:text-2xl font-bold text-purple-600 mb-1 group-hover:scale-110 transition-transform duration-200 truncate">
                 {formatCurrency(stats.avgPremium)}
               </p>
-              <p className="text-xs text-gray-500">per policy</p>
+              <p className="text-xs text-gray-500 truncate">per policy</p>
             </div>
             
-            <div className="group bg-gradient-to-br from-orange-50 to-amber-50 p-6 rounded-2xl border border-orange-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-              <div className="flex items-center gap-3 mb-3">
-                <div className="w-8 h-8 bg-orange-100 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="h-4 w-4 text-orange-600" />
+            <div className="group bg-gradient-to-br from-orange-50 to-amber-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-orange-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-orange-100 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="h-3 w-3 sm:h-4 sm:w-4 text-orange-600" />
                 </div>
-                <span className="text-sm font-semibold text-gray-600">Total Portfolio</span>
+                <span className="text-xs sm:text-sm font-semibold text-gray-600 truncate">Total Portfolio</span>
               </div>
-              <p className="text-2xl font-bold text-orange-600 mb-1 group-hover:scale-110 transition-transform duration-200">
+              <p className="text-lg sm:text-2xl font-bold text-orange-600 mb-1 group-hover:scale-110 transition-transform duration-200 truncate">
                 {formatCurrency(stats.totalPremium)}
               </p>
-              <p className="text-xs text-gray-500">all policies combined</p>
+              <p className="text-xs text-gray-500 truncate">all policies combined</p>
             </div>
           </div>
         </div>
@@ -255,21 +255,21 @@ const Dashboard: React.FC = () => {
 
       {/* Enhanced Monthly Renewals */}
       {Object.keys(stats.monthlyRenewals).length > 0 && (
-        <div className="bg-white/80 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-              <Clock className="h-5 w-5 text-white" />
+        <div className="bg-white/80 backdrop-blur-sm p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-xl border border-white/20">
+          <div className="flex items-center gap-3 mb-4 sm:mb-6">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
+              <Clock className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-gray-800">Monthly Renewal Schedule</h3>
+            <h3 className="text-lg sm:text-xl font-bold text-gray-800 truncate">Monthly Renewal Schedule</h3>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-3 sm:gap-4">
             {Object.entries(stats.monthlyRenewals)
               .sort(([a], [b]) => new Date(a).getTime() - new Date(b).getTime())
               .map(([month, count]) => (
-                <div key={month} className="group bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl border border-blue-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
-                  <p className="text-sm font-semibold text-gray-600 mb-2">{month}</p>
-                  <p className="text-3xl font-bold text-blue-600 mb-1 group-hover:scale-110 transition-transform duration-200">{count}</p>
-                  <p className="text-xs text-gray-500">
+                <div key={month} className="group bg-gradient-to-br from-blue-50 to-indigo-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-blue-100/50 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer">
+                  <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-2 truncate">{month}</p>
+                  <p className="text-2xl sm:text-3xl font-bold text-blue-600 mb-1 group-hover:scale-110 transition-transform duration-200">{count}</p>
+                  <p className="text-xs text-gray-500 truncate">
                     {count === 1 ? 'renewal' : 'renewals'}
                   </p>
                 </div>
@@ -281,31 +281,31 @@ const Dashboard: React.FC = () => {
 
       {/* Enhanced Welcome Section for Empty State */}
       {policies.length === 0 && (
-        <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-12 rounded-3xl border border-blue-100/50 shadow-xl">
+        <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 p-8 sm:p-12 rounded-2xl sm:rounded-3xl border border-blue-100/50 shadow-xl">
           {/* Background Elements */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full translate-x-20 -translate-y-20"></div>
-            <div className="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full -translate-x-16 translate-y-16"></div>
-            <div className="absolute top-1/2 left-1/2 w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full -translate-x-12 -translate-y-12"></div>
+            <div className="absolute top-0 right-0 w-20 sm:w-40 h-20 sm:h-40 bg-gradient-to-br from-blue-400 to-indigo-600 rounded-full translate-x-10 sm:translate-x-20 -translate-y-10 sm:-translate-y-20"></div>
+            <div className="absolute bottom-0 left-0 w-16 sm:w-32 h-16 sm:h-32 bg-gradient-to-br from-purple-400 to-pink-600 rounded-full -translate-x-8 sm:-translate-x-16 translate-y-8 sm:translate-y-16"></div>
+            <div className="absolute top-1/2 left-1/2 w-12 sm:w-24 h-12 sm:h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full -translate-x-6 sm:-translate-x-12 -translate-y-6 sm:-translate-y-12"></div>
           </div>
           
           <div className="text-center relative z-10">
-            <div className="w-24 h-24 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-2xl">
-              <Star className="h-12 w-12 text-white" />
+            <div className="w-16 h-16 sm:w-24 sm:h-24 bg-gradient-to-br from-blue-500 via-indigo-600 to-purple-600 rounded-2xl sm:rounded-3xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-2xl">
+              <Star className="h-8 w-8 sm:h-12 sm:w-12 text-white" />
             </div>
-            <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent mb-4">
+            <h3 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-gray-900 via-blue-800 to-indigo-800 bg-clip-text text-transparent mb-3 sm:mb-4">
               Welcome to InsureTrack
             </h3>
-            <p className="text-gray-600 mb-8 max-w-2xl mx-auto text-lg leading-relaxed">
+            <p className="text-gray-600 mb-6 sm:mb-8 max-w-2xl mx-auto text-base sm:text-lg leading-relaxed">
               Start your journey with our comprehensive insurance policy management system. 
               Track renewals, manage premiums, and stay connected with your policyholders.
             </p>
             <button
               onClick={() => window.dispatchEvent(new CustomEvent('openPolicyForm'))}
-              className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-8 py-4 rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-lg flex items-center gap-3 mx-auto"
+              className="group bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-xl sm:rounded-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 font-semibold text-base sm:text-lg flex items-center gap-2 sm:gap-3 mx-auto"
             >
-              <Plus className="h-6 w-6 group-hover:scale-110 transition-transform duration-200" />
-              Add Your First Policy
+              <Plus className="h-5 w-5 sm:h-6 sm:w-6 group-hover:scale-110 transition-transform duration-200 flex-shrink-0" />
+              <span>Add Your First Policy</span>
             </button>
           </div>
         </div>
