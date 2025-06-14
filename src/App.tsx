@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BarChart3, Users, Bell, Menu, X, MessageSquare, Sparkles, Settings as SettingsIcon } from 'lucide-react';
+import { BarChart3, Users, Bell, Menu, X, MessageSquare, Sparkles, Settings as SettingsIcon, Github, Globe } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import PolicyList from './components/PolicyList';
 import PolicyForm from './components/PolicyForm';
@@ -166,16 +166,49 @@ function App() {
           </button>
         </nav>
 
-        {/* Sidebar Footer */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 border-t border-gray-100 bg-gradient-to-r from-gray-50/80 to-gray-100/80 backdrop-blur-sm">
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
-                <Bell className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+        {/* Enhanced Sidebar Footer with Developer Credit */}
+        <div className="absolute bottom-0 left-0 right-0 p-3 sm:p-4 border-t border-gray-100 bg-gradient-to-r from-gray-50/80 to-gray-100/80 backdrop-blur-sm">
+          <div className="space-y-3">
+            {/* App Info */}
+            <div className="text-center">
+              <div className="flex items-center justify-center mb-2">
+                <div className="w-6 h-6 sm:w-8 sm:h-8 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center">
+                  <Bell className="h-3 w-3 sm:h-4 sm:w-4 text-white" />
+                </div>
+              </div>
+              <p className="text-xs text-gray-600 font-semibold">InsureTrack v2.0</p>
+              <p className="text-xs text-gray-500 mt-1 hidden sm:block">Smart Policy Management</p>
+            </div>
+            
+            {/* Developer Credit */}
+            <div className="border-t border-gray-200/50 pt-3">
+              <div className="text-center">
+                <p className="text-xs text-gray-500 mb-2">Developed by</p>
+                <p className="text-xs font-bold text-gray-700 mb-2">Yash Patil</p>
+                <div className="flex items-center justify-center gap-3">
+                  <a
+                    href="https://github.com/PATILYASHH"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:scale-105 transform"
+                    title="GitHub Profile"
+                  >
+                    <Github className="h-3 w-3" />
+                    <span className="hidden sm:inline">GitHub</span>
+                  </a>
+                  <a
+                    href="https://yashpatil.tech"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-1 text-xs text-gray-600 hover:text-blue-600 transition-colors duration-200 hover:scale-105 transform"
+                    title="Portfolio Website"
+                  >
+                    <Globe className="h-3 w-3" />
+                    <span className="hidden sm:inline">Website</span>
+                  </a>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-gray-600 font-semibold">InsureTrack v2.0</p>
-            <p className="text-xs text-gray-500 mt-1 hidden sm:block">Smart Policy Management</p>
           </div>
         </div>
       </div>
