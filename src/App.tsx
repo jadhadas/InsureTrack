@@ -5,6 +5,7 @@ import PolicyList from './components/PolicyList';
 import PolicyForm from './components/PolicyForm';
 import SMSSettings from './components/SMSSettings';
 import Settings from './components/Settings';
+import InstallPrompt from './components/InstallPrompt';
 import { usePolicies } from './hooks/usePolicies';
 import { Policy } from './types/policy';
 import { saveToLocalStorage } from './utils/localStorage';
@@ -18,23 +19,73 @@ function App() {
   const [editingPolicy, setEditingPolicy] = useState<Policy | undefined>();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [appLoading, setAppLoading] = useState(true);
+  const [appError, setAppError] = useState<string | null>(null);
   
   const { policies, loading, addPolicy, updatePolicy, deletePolicy } = usePolicies();
 
-  // App initialization
+  // App initialization with better error handling
   useEffect(() => {
-    // Remove loading screen once app is ready
-    const timer = setTimeout(() => {
-      setAppLoading(false);
-      // Remove loading screen from DOM
-      const loadingScreen = document.querySelector('.loading-screen');
-      if (loadingScreen) {
-        loadingScreen.remove();
-      }
-    }, loading ? 1000 : 500);
+    const initializeApp = async () => {
+      try {
+        // Ensure DOM is ready
+        if (document.readyState === 'loading') {
+          await new Promise(resolve => {
+            document.addEventListener('DOMContentLoaded', resolve);
+          });
+        }
 
-    return () => clearTimeout(timer);
+        // Wait for policies to load
+        let attempts = 0;
+        while (loading && attempts < 50) { // Max 5 seconds
+          await new Promise(resolve => setTimeout(resolve, 100));
+          attempts++;
+        }
+
+        // Add a minimum loading time for smooth UX
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        setAppLoading(false);
+        
+        // Remove loading screen from DOM
+        setTimeout(() => {
+          const loadingScreen = document.getElementById('loading-screen');
+          if (loadingScreen) {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+              loadingScreen.remove();
+            }, 500);
+          }
+          
+          // Add loaded class to app container
+          const appContainer = document.querySelector('.app-container');
+          if (appContainer) {
+            appContainer.classList.add('loaded');
+          }
+        }, 100);
+
+      } catch (error) {
+        console.error('App initialization error:', error);
+        setAppError('Failed to initialize application');
+        setAppLoading(false);
+      }
+    };
+
+    initializeApp();
   }, [loading]);
+
+  // Handle URL parameters for shortcuts
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const action = urlParams.get('action');
+    const view = urlParams.get('view');
+
+    if (action === 'add-policy') {
+      handleAddPolicy();
+    }
+    if (view === 'policies') {
+      setCurrentView('policies');
+    }
+  }, []);
 
   // Listen for custom events to open policy form and SMS settings
   useEffect(() => {
@@ -68,7 +119,7 @@ function App() {
   const handleFormSubmit = async (policyData: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>) => {
     try {
       if (editingPolicy) {
-        updatePolicy(editingPolicy.id, policyData);
+        await updatePolicy(editingPolicy.id, policyData);
       } else {
         await addPolicy(policyData);
       }
@@ -109,13 +160,34 @@ function App() {
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
+  // Show error screen if app failed to initialize
+  if (appError) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-red-50 to-red-100 flex items-center justify-center p-4">
+        <div className="bg-white rounded-3xl shadow-xl p-8 max-w-md w-full text-center">
+          <div className="w-16 h-16 bg-red-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <X className="h-8 w-8 text-red-600" />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">App Error</h1>
+          <p className="text-gray-600 mb-6">{appError}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="bg-red-600 text-white px-6 py-3 rounded-xl hover:bg-red-700 transition-colors duration-200 font-semibold"
+          >
+            Reload App
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Show loading screen while app is initializing
-  if (appLoading || loading) {
+  if (appLoading) {
     return null; // Loading screen is handled by HTML
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="app-container min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
         <div 
@@ -342,6 +414,9 @@ function App() {
         isOpen={isSMSSettingsOpen}
         onClose={() => setIsSMSSettingsOpen(false)}
       />
+
+      {/* Install Prompt */}
+      <InstallPrompt />
     </div>
   );
 }

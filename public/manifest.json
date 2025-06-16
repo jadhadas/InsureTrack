@@ -1,0 +1,71 @@
+{
+  "name": "InsureTrack - Insurance Policy Management",
+  "short_name": "InsureTrack",
+  "description": "Smart Insurance Policy Management System - Track renewals, manage premiums, and stay connected with policyholders",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8fafc",
+  "theme_color": "#3B82F6",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["finance", "productivity", "business"],
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%233B82F6' rx='43'/%3E%3Cpath d='M48 96l24 24 48-48' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%233B82F6' rx='115'/%3E%3Cpath d='M128 256l64 64 128-128' stroke='white' stroke-width='24' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%233B82F6' rx='40'/%3E%3Cpath d='M45 90l20 20 40-40' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3C/svg%3E",
+      "sizes": "180x180",
+      "type": "image/svg+xml",
+      "purpose": "apple-touch-icon"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 844'%3E%3Crect width='390' height='844' fill='%23f8fafc'/%3E%3Crect x='20' y='60' width='350' height='120' fill='%233B82F6' rx='20'/%3E%3Ctext x='195' y='130' text-anchor='middle' fill='white' font-size='24' font-weight='bold'%3EInsureTrack%3C/text%3E%3Crect x='20' y='200' width='350' height='80' fill='white' rx='15'/%3E%3Crect x='20' y='300' width='350' height='80' fill='white' rx='15'/%3E%3Crect x='20' y='400' width='350' height='80' fill='white' rx='15'/%3E%3C/svg%3E",
+      "sizes": "390x844",
+      "type": "image/svg+xml",
+      "form_factor": "narrow",
+      "label": "Mobile Dashboard View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Add Policy",
+      "short_name": "Add Policy",
+      "description": "Quickly add a new insurance policy",
+      "url": "/?action=add-policy",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%2310B981' rx='22'/%3E%3Cpath d='M48 24v48M24 48h48' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "View Policies",
+      "short_name": "Policies",
+      "description": "View all insurance policies",
+      "url": "/?view=policies",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 96 96'%3E%3Crect width='96' height='96' fill='%236366F1' rx='22'/%3E%3Crect x='20' y='24' width='56' height='8' fill='white' rx='4'/%3E%3Crect x='20' y='40' width='56' height='8' fill='white' rx='4'/%3E%3Crect x='20' y='56' width='56' height='8' fill='white' rx='4'/%3E%3C/svg%3E",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

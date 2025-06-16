@@ -7,42 +7,62 @@ import { sendPolicyAddedSMS, initializeSMSScheduler } from '../utils/smsNotifica
 export const usePolicies = () => {
   const [policies, setPolicies] = useState<Policy[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    try {
-      const loadedPolicies = loadFromLocalStorage();
-      
-      // Migrate existing policies to include renewalFrequency if missing
-      const migratedPolicies = loadedPolicies.map(policy => ({
-        ...policy,
-        renewalFrequency: policy.renewalFrequency || 'yearly' as const
-      }));
-      
-      if (migratedPolicies.length !== loadedPolicies.length || 
-          migratedPolicies.some((p, i) => p.renewalFrequency !== loadedPolicies[i]?.renewalFrequency)) {
-        saveToLocalStorage(migratedPolicies);
+    const loadPolicies = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Add a small delay to prevent race conditions
+        await new Promise(resolve => setTimeout(resolve, 100));
+        
+        const loadedPolicies = loadFromLocalStorage();
+        
+        // Migrate existing policies to include renewalFrequency if missing
+        const migratedPolicies = loadedPolicies.map(policy => ({
+          ...policy,
+          renewalFrequency: policy.renewalFrequency || 'yearly' as const
+        }));
+        
+        // Save migrated data if changes were made
+        if (migratedPolicies.length !== loadedPolicies.length || 
+            migratedPolicies.some((p, i) => p.renewalFrequency !== loadedPolicies[i]?.renewalFrequency)) {
+          saveToLocalStorage(migratedPolicies);
+        }
+        
+        setPolicies(migratedPolicies);
+        
+        // Initialize SMS scheduler for birthday and renewal reminders
+        if (migratedPolicies.length > 0) {
+          try {
+            initializeSMSScheduler(migratedPolicies);
+          } catch (smsError) {
+            console.warn('SMS scheduler initialization failed:', smsError);
+          }
+        }
+      } catch (error) {
+        console.error('Error loading policies:', error);
+        setError('Failed to load policies');
+        setPolicies([]);
+      } finally {
+        setLoading(false);
       }
-      
-      setPolicies(migratedPolicies);
-      
-      // Initialize SMS scheduler for birthday and renewal reminders
-      if (migratedPolicies.length > 0) {
-        initializeSMSScheduler(migratedPolicies);
-      }
-    } catch (error) {
-      console.error('Error loading policies:', error);
-      setPolicies([]);
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    loadPolicies();
   }, []);
 
-  const savePolicies = (newPolicies: Policy[]) => {
+  const savePolicies = async (newPolicies: Policy[]) => {
     try {
       setPolicies(newPolicies);
       saveToLocalStorage(newPolicies);
+      setError(null);
     } catch (error) {
       console.error('Error saving policies:', error);
+      setError('Failed to save policies');
+      throw error;
     }
   };
 
@@ -56,16 +76,17 @@ export const usePolicies = () => {
       };
       
       const updatedPolicies = [...policies, newPolicy];
-      savePolicies(updatedPolicies);
+      await savePolicies(updatedPolicies);
       
-      // Send welcome SMS
+      // Send welcome SMS (non-blocking)
       try {
         const smsResult = await sendPolicyAddedSMS(newPolicy);
         if (smsResult) {
           console.log(`Welcome SMS sent to ${newPolicy.policyholderName}`);
         }
-      } catch (error) {
-        console.error('Failed to send welcome SMS:', error);
+      } catch (smsError) {
+        console.warn('Failed to send welcome SMS:', smsError);
+        // Don't throw error for SMS failure
       }
     } catch (error) {
       console.error('Error adding policy:', error);
@@ -73,23 +94,25 @@ export const usePolicies = () => {
     }
   };
 
-  const updatePolicy = (id: string, updates: Partial<Policy>) => {
+  const updatePolicy = async (id: string, updates: Partial<Policy>) => {
     try {
       const updatedPolicies = policies.map(policy =>
         policy.id === id ? { ...policy, ...updates, updatedAt: new Date().toISOString() } : policy
       );
-      savePolicies(updatedPolicies);
+      await savePolicies(updatedPolicies);
     } catch (error) {
       console.error('Error updating policy:', error);
+      throw error;
     }
   };
 
-  const deletePolicy = (id: string) => {
+  const deletePolicy = async (id: string) => {
     try {
       const filteredPolicies = policies.filter(policy => policy.id !== id);
-      savePolicies(filteredPolicies);
+      await savePolicies(filteredPolicies);
     } catch (error) {
       console.error('Error deleting policy:', error);
+      throw error;
     }
   };
 
@@ -203,6 +226,7 @@ export const usePolicies = () => {
   return {
     policies,
     loading,
+    error,
     addPolicy,
     updatePolicy,
     deletePolicy,
