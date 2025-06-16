@@ -17,8 +17,24 @@ function App() {
   const [isSMSSettingsOpen, setIsSMSSettingsOpen] = useState(false);
   const [editingPolicy, setEditingPolicy] = useState<Policy | undefined>();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [appLoading, setAppLoading] = useState(true);
   
-  const { policies, addPolicy, updatePolicy, deletePolicy } = usePolicies();
+  const { policies, loading, addPolicy, updatePolicy, deletePolicy } = usePolicies();
+
+  // App initialization
+  useEffect(() => {
+    // Remove loading screen once app is ready
+    const timer = setTimeout(() => {
+      setAppLoading(false);
+      // Remove loading screen from DOM
+      const loadingScreen = document.querySelector('.loading-screen');
+      if (loadingScreen) {
+        loadingScreen.remove();
+      }
+    }, loading ? 1000 : 500);
+
+    return () => clearTimeout(timer);
+  }, [loading]);
 
   // Listen for custom events to open policy form and SMS settings
   useEffect(() => {
@@ -49,14 +65,19 @@ function App() {
     setIsFormOpen(true);
   };
 
-  const handleFormSubmit = (policyData: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>) => {
-    if (editingPolicy) {
-      updatePolicy(editingPolicy.id, policyData);
-    } else {
-      addPolicy(policyData);
+  const handleFormSubmit = async (policyData: Omit<Policy, 'id' | 'createdAt' | 'updatedAt'>) => {
+    try {
+      if (editingPolicy) {
+        updatePolicy(editingPolicy.id, policyData);
+      } else {
+        await addPolicy(policyData);
+      }
+      setIsFormOpen(false);
+      setEditingPolicy(undefined);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      // You could show an error message to the user here
     }
-    setIsFormOpen(false);
-    setEditingPolicy(undefined);
   };
 
   const handleFormClose = () => {
@@ -65,13 +86,21 @@ function App() {
   };
 
   const handleImportPolicies = (importedPolicies: Policy[]) => {
-    saveToLocalStorage(importedPolicies);
-    window.location.reload(); // Refresh to load new data
+    try {
+      saveToLocalStorage(importedPolicies);
+      window.location.reload(); // Refresh to load new data
+    } catch (error) {
+      console.error('Error importing policies:', error);
+    }
   };
 
   const handleClearAllData = () => {
-    saveToLocalStorage([]);
-    window.location.reload(); // Refresh to clear all data
+    try {
+      saveToLocalStorage([]);
+      window.location.reload(); // Refresh to clear all data
+    } catch (error) {
+      console.error('Error clearing data:', error);
+    }
   };
 
   const navigationItems = [
@@ -79,6 +108,11 @@ function App() {
     { id: 'policies', label: 'Policies', icon: Users },
     { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
+
+  // Show loading screen while app is initializing
+  if (appLoading || loading) {
+    return null; // Loading screen is handled by HTML
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
