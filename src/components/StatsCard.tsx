@@ -48,23 +48,23 @@ const StatsCard: React.FC<StatsCardProps> = ({ title, value, icon: Icon, color, 
   const colors = colorClasses[color];
 
   return (
-    <div className={`group ${colors.card} backdrop-blur-sm p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl ${colors.glow} border cursor-pointer relative overflow-hidden`}>
+    <div className={`group ${colors.card} backdrop-blur-sm p-3 sm:p-4 lg:p-6 rounded-xl sm:rounded-2xl lg:rounded-3xl shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl ${colors.glow} border cursor-pointer relative overflow-hidden w-full`}>
       {/* Background Glow Effect */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300">
-        <div className={`absolute inset-0 ${colors.bg} rounded-2xl sm:rounded-3xl`}></div>
+        <div className={`absolute inset-0 ${colors.bg} rounded-xl sm:rounded-2xl lg:rounded-3xl`}></div>
       </div>
       
-      <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
-        <div className={`${colors.bg} p-3 sm:p-4 rounded-xl sm:rounded-2xl shadow-lg ${colors.shadow} group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0`}>
-          <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${colors.icon}`} />
+      <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 lg:gap-4">
+        <div className={`${colors.bg} p-2 sm:p-3 lg:p-4 rounded-lg sm:rounded-xl lg:rounded-2xl shadow-lg ${colors.shadow} group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 flex-shrink-0`}>
+          <Icon className={`h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 ${colors.icon}`} />
         </div>
         <div className="flex-1 min-w-0 w-full sm:w-auto">
           <p className="text-xs sm:text-sm font-semibold text-gray-600 mb-1 truncate group-hover:text-gray-700 transition-colors duration-200">
             {title}
           </p>
-          <p className={`text-xl sm:text-2xl font-bold ${colors.text} mb-1 group-hover:scale-105 transition-all duration-300 truncate`}>
-            {typeof value === 'string' && value.length > 8 ? (
-              <span className="text-lg sm:text-xl">{value}</span>
+          <p className={`text-base sm:text-lg lg:text-xl xl:text-2xl font-bold ${colors.text} mb-1 group-hover:scale-105 transition-all duration-300 truncate`}>
+            {typeof value === 'string' && value.length > 12 ? (
+              <span className="text-sm sm:text-base lg:text-lg">{value}</span>
             ) : (
               value
             )}
